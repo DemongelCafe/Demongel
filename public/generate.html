@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate QR Code</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://images3.alphacoders.com/135/1358644.png'); /* Replace with your direct image URL */
+            background-size: cover; /* This makes the image cover the whole screen */
+            background-repeat: no-repeat; /* Prevents repeating the image */
+            background-position: center; /* Centers the image */
+            background-attachment: fixed; /* Makes the background fixed during scroll */
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .qr-code {
+            margin: 20px 0;
+        }
+        #downloadButton {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        #downloadButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate QR Code</h1>
+        <div class="qr-code" id="qrCodeContainer"></div>
+        <button id="downloadButton" style="display: none;">Download QR Code</button>
+    </div>
+
+    <script>
+        let qrCodeDataUrl = ''; // To store the QR code data URL
+
+        async function generateQRCode() {
+            try {
+                const response = await fetch('/generate-qr');
+                qrCodeDataUrl = await response.text();
+                document.getElementById('qrCodeContainer').innerHTML = qrCodeDataUrl;
+
+                // Show the download button once QR code is generated
+                document.getElementById('downloadButton').style.display = 'block';
+            } catch (error) {
+                document.getElementById('qrCodeContainer').innerText = 'Error generating QR code';
+            }
+        }
+
+        // Add download functionality to the button
+        document.getElementById('downloadButton').onclick = function() {
+            const link = document.createElement('a');
+            link.href = qrCodeDataUrl.match(/"(.*?)"/)[1]; // Extract the data URL from the img tag
+            link.download = 'qr_code.png'; // Set the filename
+            link.click(); // Programmatically click the link to trigger download
+        };
+
+        generateQRCode(); // Call the function to generate the QR code when the page loads
+    </script>
+</body>
+</html>
